@@ -6,9 +6,10 @@ import java.io.Serializable;
  * Created by brian on 10/11/15.
  */
 public class Exercise implements Serializable {
-    private long id = 0;
+    private long id = 0; // PK col id
     private String exerciseName = null;
-    private long exerciseTypeId = 0;
+    private String exerciseType = null;
+    private long userId = -1;
 
     // for custom row view - can it be removed?
     boolean selected = false;
@@ -17,16 +18,17 @@ public class Exercise implements Serializable {
     }
 
    // used when creating FROM the DB?
-    public Exercise(long id, String exerciseName, long exerciseTypeId) {
-        this.exerciseTypeId = exerciseTypeId;
+    public Exercise(long userId, String exerciseName, String exerciseType) {
+        this.exerciseType = exerciseType;
         this.exerciseName = exerciseName;
-        this.id = id;
+        this.userId = userId;
     }
 
     // used when adding TO the DB?
-    public Exercise(String exerciseName, long exerciseTypeId) {
-        this.exerciseTypeId = exerciseTypeId;
+    public Exercise(String exerciseName, String exerciseType, long userId) {
         this.exerciseName = exerciseName;
+        this.exerciseType = exerciseType;
+        this.userId = userId;
     }
 
     public long getId() {
@@ -37,6 +39,14 @@ public class Exercise implements Serializable {
         this.id = id;
     }
 
+    public long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(long userId) {
+        this.userId = userId;
+    }
+
     public String getExerciseName() {
         return exerciseName;
     }
@@ -45,12 +55,12 @@ public class Exercise implements Serializable {
         this.exerciseName = exerciseName;
     }
 
-    public void setExerciseTypeId(long exerciseTypeId) {
-        this.exerciseTypeId = exerciseTypeId;
+    public void setExerciseType(String exerciseType) {
+        this.exerciseType = exerciseType;
     }
 
-    public long getExerciseTypeId() {
-        return exerciseTypeId;
+    public String getExerciseType() {
+        return exerciseType;
     }
 
     // Will be used by the ArrayAdapter in the ListView

@@ -6,6 +6,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import java.sql.SQLException;
+import java.util.List;
 
 import android.util.Log;
 
@@ -14,16 +15,10 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String LOG = "MainActivity";
 
-    private ExerciseDAO mExerciseDAO;
-    private TypeDAO mTypeDAO;
-
-    // Database Helper
-    //DBHelper db;
-    private TypeDbAdapter mTypeDbAdapter;
+    //private ExerciseDAO mExerciseDAO;
     private ExerciseDbAdapter mExerciseDbAdapter;
-
-    AbstractDbAdapter mDbAdapter;
-
+    private UserDbAdapter mUserDbAdapter;
+    private WorkoutDbAdapter mWorkoutDbAdapter;
 
 
     @Override
@@ -33,17 +28,13 @@ public class MainActivity extends AppCompatActivity {
 
         Log.d(LOG, "onCreate");
 
-        //db = new DatabaseHelper(getApplicationContext());
-        //mExerciseDAO = new ExerciseDAO(this);
-       // mTypeDAO = new TypeDAO(this);
 
-        mTypeDbAdapter = new TypeDbAdapter(this);
-        //mTypeDbAdapter.open();  // why do other examples not try/catch this?!?
+        mUserDbAdapter = new UserDbAdapter(this);
         try{
-            mTypeDbAdapter.open();
+            mUserDbAdapter.open();
         }
-            catch(SQLException e) {
-                Log.e(LOG, "type table open error");
+        catch(SQLException e) {
+            Log.e(LOG, "user table open error");
         }
 
         mExerciseDbAdapter = new ExerciseDbAdapter(this);
@@ -54,38 +45,76 @@ public class MainActivity extends AppCompatActivity {
             Log.e(LOG, "exercise table open error");
         }
 
-/*        mDbAdapter = new AbstractDbAdapter(this);
+        mWorkoutDbAdapter = new WorkoutDbAdapter(this);
         try{
-            mDbAdapter.open();
+            mWorkoutDbAdapter.open();
         }
         catch(SQLException e) {
-            Log.e(LOG, "mDbAdapter table open error");
-        }*/
+            Log.e(LOG, "workout table open error");
+        }
 
-        // Creating Types
-        Type type1 = new Type("None");
-        Type type2 = new Type("Chest");
-/*        Type type3 = new Type("Back");
-        Type type4 = new Type("Biceps");
-        Type type5 = new Type("Triceps");
-        Type type6 = new Type("Arms");
-        Type type7 = new Type("Legs");
-        Type type8 = new Type("Abs");
-        Type type9 = new Type("Core");*/
+        mUserDbAdapter.removeAllUsers();
 
-        // Inserting types in db
-        long type1_id = mTypeDbAdapter.createType(type1);
-        long type2_id = mTypeDbAdapter.createType(type2);
+        //--------------------USER-----------------------//
+
+        // Creating User
+        User user = new User("John", "Smith", "Beefcake");
+        User user2 = new User("Bob", "MacNamara", "Brutus");
+
+        // Inserting user in db
+        long user_id = mUserDbAdapter.createUser(user);
+        long user_id2 = mUserDbAdapter.createUser(user2);
+
+        // Read user
+        User userOut = mUserDbAdapter.getUser(user_id);
+        Log.d(LOG, "user= " + user.getUserName());
+
+        // all users
+        List<User> users = mUserDbAdapter.getAllUsers();
+        for ( User u : users ) {
+            Log.d(LOG, u.toString());
+        }
+
+        // delete User
+        mUserDbAdapter.removeUser("Brutus");
+
+        // all users
+        users = mUserDbAdapter.getAllUsers();
+        for ( User u : users ) {
+            Log.d(LOG, u.toString());
+        }
 
 
-        Exercise ex1 = new Exercise("unDuctor", type1_id);
-        Exercise ex2 = new Exercise("Bench Press", type2_id);
+        // update user
+        user.setFirstName("JoeyJoJo");
+        mUserDbAdapter.updateUser(user_id, user);
 
-        mExerciseDbAdapter.createExercise(ex1);
-        mExerciseDbAdapter.createExercise(ex2);
+        // all users
+        users = mUserDbAdapter.getAllUsers();
+        for ( User u : users ) {
+            Log.d(LOG, u.toString());
+        }
 
-        Log.d(LOG, String.valueOf(mExerciseDbAdapter.mDatabaseHelper));
-        Log.d(LOG, String.valueOf(mTypeDbAdapter.mDatabaseHelper) );
+        //--------------------EXERCISE-----------------------//
+
+        // Create Exercise
+        Exercise ex1 = new Exercise("unDuctor", "Tricep", user_id);
+        Exercise ex2 = new Exercise("Bench Press", "Chest", user_id);
+
+        long ex_id1 = mExerciseDbAdapter.createExercise(ex1);
+        long ex_id2 = mExerciseDbAdapter.createExercise(ex2);
+
+        // Create Workout
+        Workout w1 = new Workout(System.currentTimeMillis(), ex_id1);
+        Workout w2 = new Workout(System.currentTimeMillis(), ex_id2);
+
+        w1.setReps("10,8,6");
+        w1.setSets(3);
+        w1.setWeight("80,90,100");
+
+
+        long w_id1 = mWorkoutDbAdapter.createWorkout(w1);
+        long w_id2 = mWorkoutDbAdapter.createWorkout(w2);
 
 
         //Log.d("Tag Count", "Tag Count: " + db.getAllTags().size());
@@ -128,6 +157,9 @@ public class MainActivity extends AppCompatActivity {
 
         Log.e("Todo Count", "Todo count: " + db.getToDoCount());*/
 
+        mExerciseDbAdapter.close();
+        mUserDbAdapter.close();
+        mWorkoutDbAdapter.close();
 
     }
 

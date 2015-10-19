@@ -12,6 +12,13 @@ import java.util.List;
 /**
  * Created by brian on 10/11/15.
  */
+
+
+
+// this is no longer used
+
+
+
 public class ExerciseDAO {
     // Database fields
     private SQLiteDatabase database;
@@ -39,14 +46,18 @@ public class ExerciseDAO {
         ContentValues values = new ContentValues();
 
         values.put(DBHelper.COLUMN_EXERCISE_NAME, exercise.getExerciseName());
-        values.put(DBHelper.COLUMN_EXERCISE_TYPE_ID, exercise.getExerciseTypeId());
+        values.put(DBHelper.COLUMN_EXERCISE_TYPE_ID, exercise.getExerciseType());
 
         long insertId = database.insert(DBHelper.TABLE_EXERCISE, null, values);
 
-        Cursor cursor = database.query(DBHelper.TABLE_EXERCISE,
+        Cursor cursor = database.query(
+                DBHelper.TABLE_EXERCISE,
                 allColumns,
                 DBHelper.COLUMN_ID + " = " + insertId,
-                null, null, null, null);
+                null,
+                null,
+                null,
+                null);
 
         cursor.moveToFirst();
         Exercise newExercise = cursorToExercise(cursor);
@@ -56,7 +67,7 @@ public class ExerciseDAO {
     }
 
     public void deleteExercise(Exercise Exercise) {
-        long id = Exercise.getId();
+        long id = Exercise.getUserId();
         System.out.println("Exercise deleted with id: " + id);
         database.delete(DBHelper.TABLE_EXERCISE, DBHelper.COLUMN_ID
                 + " = " + id, null);
@@ -65,8 +76,14 @@ public class ExerciseDAO {
     public List<Exercise> getAllExercises() {
         List<Exercise> Exercises = new ArrayList<Exercise>();
 
-        Cursor cursor = database.query(DBHelper.TABLE_EXERCISE,
-                allColumns, null, null, null, null, null);
+        Cursor cursor = database.query(
+                DBHelper.TABLE_EXERCISE,
+                allColumns,
+                null,
+                null,
+                null,
+                null,
+                null);
 
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
@@ -82,9 +99,9 @@ public class ExerciseDAO {
     // ?convert a "ptr/cursor" of a table entry to an Exercise Object
     private Exercise cursorToExercise(Cursor cursor) {
         Exercise Exercise = new Exercise();
-        Exercise.setId(cursor.getLong(0));
+        Exercise.setUserId(cursor.getLong(0));
         Exercise.setExerciseName(cursor.getString(1));
-        Exercise.setExerciseTypeId(cursor.getLong(2));
+        Exercise.setExerciseType(cursor.getString(2));
 
         return Exercise;
     }

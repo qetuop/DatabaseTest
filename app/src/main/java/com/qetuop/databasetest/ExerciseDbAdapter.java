@@ -16,7 +16,8 @@ public class ExerciseDbAdapter extends AbstractDbAdapter {
     public long createExercise(Exercise exercise) {
         ContentValues args = new ContentValues();
         args.put(COLUMN_EXERCISE_NAME, exercise.getExerciseName());
-        args.put(COLUMN_EXERCISE_TYPE_ID, exercise.getExerciseTypeId());
+        args.put(COLUMN_EXERCISE_TYPE, exercise.getExerciseType());
+        args.put(COLUMN_EXERCISE_USER_ID, exercise.getUserId());
 
         return mDb.insert(TABLE_EXERCISE, null, args);
     }

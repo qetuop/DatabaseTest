@@ -19,42 +19,48 @@ public class AbstractDbAdapter {
     protected SQLiteDatabase mDb;
 
     // Database Version
-    private static final int DATABASE_VERSION = 5;
+    private static final int DATABASE_VERSION = 10;
 
     // Database Name
     private static final String DATABASE_NAME = "spotU2000.db";
 
     // Table Names
     public static final String TABLE_EXERCISE = "exercise";
-    public static final String TABLE_TYPE = "type";
+    public static final String TABLE_USER = "user";
+    public static final String TABLE_WORKOUT = "workout";
 
-    // common
+    // Common
     public static final String COLUMN_ID = "_id"; // use BaseColumns._ID or create class that implements it? Contract class?
 
     // Exercise Table
     public static final String COLUMN_EXERCISE_NAME = "name";
-    public static final String COLUMN_EXERCISE_TYPE_ID = "exercise_type"; // TODO this wil be a FK into another table?
+    public static final String COLUMN_EXERCISE_TYPE = "type";
+    public static final String COLUMN_EXERCISE_USER_ID = "user_id";
 
-    // Exercise Table
-    public static final String COLUMN_TYPE_TYPE= "type";
+    // User TABLE
+    public static final String COLUMN_USER_FIRST_NAME = "first_name";
+    public static final String COLUMN_USER_LAST_NAME = "last_name";
+    public static final String COLUMN_USER_USER_NAME = "user_name";
+
+    // Workout TABLE
+    public static final String COLUMN_WORKOUT_CREATION_DATE = "creation_date";
+    public static final String COLUMN_WORKOUT_EXERCISE_ID = "exercise_id";
+    public static final String COLUMN_WORKOUT_SETS = "sets";
+    public static final String COLUMN_WORKOUT_REPS = "reps";
+    public static final String COLUMN_WORKOUT_WEIGHT = "weight";
 
     private static final String TEXT_TYPE = " TEXT";
     private static final String COMMA_SEP = ",";
 
-
-   /* + TASK_CAT + " integer,"
-    + " FOREIGN KEY ("+TASK_CAT+") REFERENCES "+CAT_TABLE+"("+CAT_ID+"));";
-
-    TASK_CAT+" INTEGER REFERENCES "+CAT_TABLE+");";*/
-
-
     // Table Create Statements
 
-    //  Type table create statement - create first since Exercise references it
-    private static final String CREATE_TABLE_TYPE = "CREATE TABLE "
-            + TABLE_TYPE + "("
+    //  User table create statement - create first since Exercise references it?
+    private static final String CREATE_TABLE_USER = "CREATE TABLE "
+            + TABLE_USER+ "("
             + COLUMN_ID + " integer primary key autoincrement, "
-            + COLUMN_TYPE_TYPE + " text unique"
+            + COLUMN_USER_FIRST_NAME + " text, "
+            + COLUMN_USER_LAST_NAME + " text, "
+            + COLUMN_USER_USER_NAME + " text not null "
             + ")";  // no trailing ';'
 
 
@@ -63,9 +69,20 @@ public class AbstractDbAdapter {
             + TABLE_EXERCISE + "("
             + COLUMN_ID + " integer primary key autoincrement, "
             + COLUMN_EXERCISE_NAME + " text not null, "
-            + COLUMN_EXERCISE_TYPE_ID + " integer references " + TABLE_TYPE
+            + COLUMN_EXERCISE_USER_ID + " integer references " + TABLE_USER + ", "
+            + COLUMN_EXERCISE_TYPE + " text not null "
             + ")"; // no trailing ';'
 
+    // Workout table create statement
+    private static final String CREATE_TABLE_WORKOUT = "CREATE TABLE "
+            + TABLE_WORKOUT + "("
+            + COLUMN_ID + " integer primary key autoincrement, "
+            + COLUMN_WORKOUT_CREATION_DATE + " integer not null, "
+            + COLUMN_WORKOUT_EXERCISE_ID + " integer references " + TABLE_EXERCISE + ", "
+            + COLUMN_WORKOUT_SETS + " integer, "
+            + COLUMN_WORKOUT_REPS + " text, "
+            + COLUMN_WORKOUT_WEIGHT + " text "
+            + ")"; // no trailing ';'
 
 
     protected final Context mCtx;
@@ -82,8 +99,9 @@ public class AbstractDbAdapter {
         public void onCreate(SQLiteDatabase db) {
             Log.d(LOG, "onCreate");
 
+            db.execSQL(CREATE_TABLE_USER);
             db.execSQL(CREATE_TABLE_EXERCISE);
-            db.execSQL(CREATE_TABLE_TYPE);
+            db.execSQL(CREATE_TABLE_WORKOUT);
 
             // requires API 16
 //            db.setForeignKeyConstraintsEnabled(true); // ?finish transactions ??
@@ -98,7 +116,8 @@ public class AbstractDbAdapter {
             // create backup first?
 
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_EXERCISE);
-            db.execSQL("DROP TABLE IF EXISTS " + TABLE_TYPE);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_USER);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_WORKOUT);
 
             onCreate(db);
         }
@@ -117,7 +136,8 @@ public class AbstractDbAdapter {
         return this;
     }
 
-/*    public SQLiteDatabase open() throws SQLException {
+/*    concurrent issue?
+public SQLiteDatabase open() throws SQLException {
         Log.d(LOG, "open");
 
         if (mDatabaseHelper == null) {

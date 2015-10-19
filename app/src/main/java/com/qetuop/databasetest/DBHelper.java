@@ -11,6 +11,12 @@ import android.util.Log;
 /**
  * Created by brian on 10/11/15.
  */
+
+
+// this is no longer used
+
+
+
 public class DBHelper extends SQLiteOpenHelper {
 
     // Logcat tag
