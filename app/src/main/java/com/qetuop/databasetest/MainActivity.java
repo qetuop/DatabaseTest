@@ -6,6 +6,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
 
 import android.util.Log;
@@ -53,9 +54,11 @@ public class MainActivity extends AppCompatActivity {
             Log.e(LOG, "workout table open error");
         }
 
-        mUserDbAdapter.removeAllUsers();
+
 
         //--------------------USER-----------------------//
+
+        mUserDbAdapter.removeAllUsers();
 
         // Creating User
         User user = new User("John", "Smith", "Beefcake");
@@ -78,10 +81,13 @@ public class MainActivity extends AppCompatActivity {
         // delete User
         mUserDbAdapter.removeUser("Brutus");
 
+
         // all users
+        HashMap<Long, String> userIdMap = new HashMap<>();
         users = mUserDbAdapter.getAllUsers();
         for ( User u : users ) {
             Log.d(LOG, u.toString());
+            userIdMap.put(user.getId(), user.getUserName());
         }
 
 
