@@ -15,6 +15,7 @@ import java.util.List;
  */
 public class UserDbAdapter extends AbstractDbAdapter {
     private String[] projection = {
+            COLUMN_ID,
             COLUMN_USER_FIRST_NAME,
             COLUMN_USER_LAST_NAME,
             COLUMN_USER_USER_NAME
@@ -38,7 +39,8 @@ public class UserDbAdapter extends AbstractDbAdapter {
     // convert a "ptr/cursor" of a table entry to an object
     private User cursorToUser(Cursor cursor) {
         User user = new User();
-        //user.setId(cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_ID))); // why can't get?
+
+        user.setId(cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_ID))); // why can't get?
         user.setFirstName(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_USER_FIRST_NAME)));
         user.setLastName(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_USER_LAST_NAME)));
         user.setUserName(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_USER_USER_NAME)));

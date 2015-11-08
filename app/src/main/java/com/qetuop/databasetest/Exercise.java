@@ -64,10 +64,21 @@ public class Exercise implements Serializable {
     }
 
     // Will be used by the ArrayAdapter in the ListView
-    @Override
+/*    @Override
     public String toString() {
         return exerciseName;
+    }*/
+
+    @Override
+    public String toString() {
+        return "Exercise{" +
+                "id=" + id +
+                ", Name='" + exerciseName + '\'' +
+                ", Type='" + exerciseType + '\'' +
+                ", UserID='" + userId + '\'' +
+                '}';
     }
+
 
     public boolean isSelected() {
         return selected;

@@ -19,6 +19,9 @@ public class Workout implements Serializable {
     private String reps;
     private String weight;
 
+    public Workout() {
+    }
+
     public Workout(long date, long exercise_id) {
         this.date = date;
         this.exercise_id = exercise_id;
@@ -71,4 +74,17 @@ public class Workout implements Serializable {
     public void setWeight(String weight) {
         this.weight = weight;
     }
+
+    @Override
+    public String toString() {
+        return "Workout{" +
+                "id=" + id +
+                ", date='" + date + '\'' +
+                ", exercise_id='" + exercise_id + '\'' +
+                ", sets='" + sets + '\'' +
+                ", reps='" + reps + '\'' +
+                ", weight='" + weight + '\'' +
+                '}';
+    }
+
 }

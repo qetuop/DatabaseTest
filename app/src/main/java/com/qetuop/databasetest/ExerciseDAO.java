@@ -81,9 +81,7 @@ public class ExerciseDAO {
                 allColumns,
                 null,
                 null,
-                null,
-                null,
-                null);
+                null, null, null);
 
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {

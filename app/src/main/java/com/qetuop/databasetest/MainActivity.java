@@ -6,8 +6,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.TimeZone;
 
 import android.util.Log;
 
@@ -61,16 +64,16 @@ public class MainActivity extends AppCompatActivity {
         mUserDbAdapter.removeAllUsers();
 
         // Creating User
-        User user = new User("John", "Smith", "Beefcake");
+        User user1 = new User("John", "Smith", "Beefcake");
         User user2 = new User("Bob", "MacNamara", "Brutus");
 
         // Inserting user in db
-        long user_id = mUserDbAdapter.createUser(user);
+        long user_id1 = mUserDbAdapter.createUser(user1);
         long user_id2 = mUserDbAdapter.createUser(user2);
 
         // Read user
-        User userOut = mUserDbAdapter.getUser(user_id);
-        Log.d(LOG, "user= " + user.getUserName());
+        User userOut = mUserDbAdapter.getUser(user_id1);
+        Log.d(LOG, "user= " + user1.getUserName());
 
         // all users
         List<User> users = mUserDbAdapter.getAllUsers();
@@ -81,19 +84,17 @@ public class MainActivity extends AppCompatActivity {
         // delete User
         mUserDbAdapter.removeUser("Brutus");
 
-
         // all users
         HashMap<Long, String> userIdMap = new HashMap<>();
         users = mUserDbAdapter.getAllUsers();
         for ( User u : users ) {
             Log.d(LOG, u.toString());
-            userIdMap.put(user.getId(), user.getUserName());
+            userIdMap.put(u.getId(), u.getUserName());
         }
 
-
         // update user
-        user.setFirstName("JoeyJoJo");
-        mUserDbAdapter.updateUser(user_id, user);
+        user1.setFirstName("JoeyJoJo");
+        mUserDbAdapter.updateUser(user_id1, user1);
 
         // all users
         users = mUserDbAdapter.getAllUsers();
@@ -102,13 +103,48 @@ public class MainActivity extends AppCompatActivity {
         }
 
         //--------------------EXERCISE-----------------------//
+        mExerciseDbAdapter.removeAllExercises();
 
         // Create Exercise
-        Exercise ex1 = new Exercise("unDuctor", "Tricep", user_id);
-        Exercise ex2 = new Exercise("Bench Press", "Chest", user_id);
+        Exercise ex1 = new Exercise("unDuctor", "Tricep", user_id1);
+        Exercise ex2 = new Exercise("Bench Press", "Chest", user_id2);  // User no long exists !
 
+        // Inserting in db
         long ex_id1 = mExerciseDbAdapter.createExercise(ex1);
+        ex1.setId(ex_id1);
         long ex_id2 = mExerciseDbAdapter.createExercise(ex2);
+
+        // Read
+        Exercise e = mExerciseDbAdapter.getExercise(ex_id1);
+        Log.d(LOG, "exercise= " + e);
+
+        // all
+        List<Exercise> exercises = mExerciseDbAdapter.getAllExercises();
+        for ( Exercise ex : exercises ) {
+            Log.d(LOG, ex.toString());
+        }
+
+        // delete
+        mExerciseDbAdapter.removeExercise(ex_id2);
+
+        // all
+        exercises = mExerciseDbAdapter.getAllExercises();
+        for ( Exercise ex : exercises ) {
+            Log.d(LOG, ex.toString());
+        }
+
+        // update
+        ex1.setExerciseName("Tri push down");
+        mExerciseDbAdapter.updateExercise(ex1.getId(), ex1);
+
+        // all
+        exercises = mExerciseDbAdapter.getAllExercises();
+        for ( Exercise ex : exercises ) {
+            Log.d(LOG, ex.toString());
+        }
+
+        //--------------------WORKOUT-----------------------//
+        mWorkoutDbAdapter.removeAllWorkouts();
 
         // Create Workout
         Workout w1 = new Workout(System.currentTimeMillis(), ex_id1);
@@ -118,9 +154,38 @@ public class MainActivity extends AppCompatActivity {
         w1.setSets(3);
         w1.setWeight("80,90,100");
 
-
+        // Insert
         long w_id1 = mWorkoutDbAdapter.createWorkout(w1);
         long w_id2 = mWorkoutDbAdapter.createWorkout(w2);
+
+        // Read
+        Workout w = mWorkoutDbAdapter.getWorkout(w_id1);
+        Log.d(LOG, "workout= " + w);
+
+        // all
+        List<Workout> workouts = mWorkoutDbAdapter.getAllWorkouts();
+        for (  Workout wo : workouts ) {
+            Log.d(LOG, wo.toString());
+        }
+
+        // delete
+        mWorkoutDbAdapter.removeWorkout(w_id2);
+
+        // update
+        w1.setWeight("1,2,3");
+        mWorkoutDbAdapter.updateWorkout(w_id1, w1);
+
+        // all
+        workouts = mWorkoutDbAdapter.getAllWorkouts();
+        for (  Workout wo : workouts ) {
+            Log.d(LOG, wo.toString());
+
+            DateFormat df = DateFormat.getDateTimeInstance();
+            df.setTimeZone(TimeZone.getTimeZone("EST"));
+            System.out.println(df.format(new Date(wo.getDate())));
+            Log.d(LOG, df.format(new Date(wo.getDate() ) ) );
+        }
+
 
 
         //Log.d("Tag Count", "Tag Count: " + db.getAllTags().size());
